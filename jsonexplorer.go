@@ -12,32 +12,33 @@ func NewWindow(w, h int) *Window {
 }
 
 func (w *Window) MoveCursor(x, y int) {
-	newX := w.CursorX + x
-	if newX < 0 {
-		newX = 0
-	} else if newX >= w.Width {
-		newX = w.CursorX
-	}
-	newY := w.CursorY + y
-	if newY < 0 {
-		newY = 0
-	} else if newY >= w.Height {
-		newY = w.CursorY
-	}
-
-	w.CursorX, w.CursorY = newX, newY
+	w.CursorX, w.CursorY = w.CursorX+x, w.CursorY+y
+	w.EnsureCursorWithinWindow()
 }
 
 func (w *Window) Resize(width, height int) {
 	w.Width = width
 	w.Height = height
+	w.EnsureCursorWithinWindow()
+}
 
-	if w.CursorX > width {
-		w.CursorX = width
+func (w *Window) EnsureCursorWithinWindow() {
+	w.CursorX = min(w.Width-1, max(0, w.CursorX))
+	w.CursorY = min(w.Height-1, max(0, w.CursorY))
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
 	}
-	if w.CursorY > height {
-		w.CursorY = height
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
 	}
+	return b
 }
 
 var (
