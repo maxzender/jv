@@ -1,6 +1,12 @@
 package main
 
-import "github.com/nsf/termbox-go"
+import (
+	"io/ioutil"
+	"os"
+	"strings"
+
+	"github.com/nsf/termbox-go"
+)
 
 type Window struct {
 	Width, Height    int
@@ -49,7 +55,51 @@ var (
 		'k': func() { window.MoveCursor(0, -1) },
 		'l': func() { window.MoveCursor(+1, 0) },
 	}
+	expandedLines = make(map[int]struct{})
+	segments      = make(map[int]int)
 )
+
+// finds pairs of line numbers that describe the section between two matching brackets
+func parseSegments(lines []string) {
+	bracketBalances := make(map[int]int)
+	var bal int
+	for num, line := range lines {
+		for _, c := range line {
+			switch c {
+			case '{', '[':
+				bal += 1
+				bracketBalances[bal] = num
+			case '}', ']':
+				segments[bracketBalances[bal]] = num
+				bal -= 1
+			}
+		}
+	}
+}
+
+func print(content string, w *Window) {
+	lines := strings.Split(content, "\n")
+	lineCount := len(lines)
+	parseSegments(lines)
+	skipTill := 0
+	lineCursor := 0
+
+	for y := 0; y < w.Height && y < lineCount; y++ {
+		if y >= skipTill {
+			_, expanded := expandedLines[y]
+			if !expanded {
+				skipTill = segments[y]
+			}
+
+			lineLen := len(lines[y])
+			for x := 0; x < w.Width && x < lineLen; x++ {
+				current := rune(lines[y][x])
+				termbox.SetCell(x, lineCursor, current, termbox.ColorWhite, termbox.ColorDefault)
+			}
+			lineCursor += 1
+		}
+	}
+}
 
 func main() {
 	err := termbox.Init()
@@ -59,6 +109,10 @@ func main() {
 	defer termbox.Close()
 
 	window = NewWindow(termbox.Size())
+
+	expandedLines[0] = struct{}{}
+	content, err := ioutil.ReadAll(os.Stdin)
+	print(string(content), window)
 
 	for {
 		switch e := termbox.PollEvent(); e.Type {
