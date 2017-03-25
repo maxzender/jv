@@ -101,6 +101,15 @@ func print(content string, w *Window) {
 	}
 }
 
+func toggleLine(num int) {
+	_, expanded := expandedLines[num]
+	if expanded {
+		delete(expandedLines, num)
+	} else {
+		expandedLines[num] = struct{}{}
+	}
+}
+
 func main() {
 	err := termbox.Init()
 	if err != nil {
@@ -119,12 +128,16 @@ func main() {
 		case termbox.EventKey:
 			if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 				return
+			} else if e.Key == termbox.KeyEnter {
+				toggleLine(window.CursorY)
 			} else {
 				handleKeyPress(e)
 			}
 		case termbox.EventResize:
 			window.Resize(e.Width, e.Height)
 		}
+		termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
+		print(string(content), window)
 		termbox.SetCursor(window.CursorX, window.CursorY)
 		termbox.Flush()
 	}
