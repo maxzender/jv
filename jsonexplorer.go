@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/maxzender/jsonexplorer/contentview"
 	"github.com/maxzender/jsonexplorer/terminal"
 	termbox "github.com/nsf/termbox-go"
 )
@@ -19,8 +20,7 @@ var (
 	specialKeyMap = map[termbox.Key]func(*terminal.Terminal){
 		termbox.KeyEnter: func(t *terminal.Terminal) { toggleLine(t) },
 	}
-	expandedLines = map[int]struct{}{0: struct{}{}}
-	segments      = make(map[int]int)
+	view *contentview.ContentView
 )
 
 func main() {
@@ -31,11 +31,11 @@ func main() {
 	defer term.Close()
 
 	byteContent, err := ioutil.ReadAll(os.Stdin)
-	content := string(byteContent)
-	segments = parseSegments(content)
+	content := strings.Split(string(byteContent), "\n")
+	view = contentview.New(content)
 
 	for {
-		term.Draw(string(content))
+		term.Draw(view.Content())
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 			return
@@ -59,26 +59,6 @@ func handleKeypress(term *terminal.Terminal, event terminal.Event) {
 	}
 }
 
-func parseSegments(content string) map[int]int {
-	lines := strings.Split(content, "\n")
-	resultSegments := make(map[int]int)
-	bracketBalances := make(map[int]int)
-	var bal int
-	for num, line := range lines {
-		for _, c := range line {
-			switch c {
-			case '{', '[':
-				bal += 1
-				bracketBalances[bal] = num
-			case '}', ']':
-				resultSegments[bracketBalances[bal]] = num
-				bal -= 1
-			}
-		}
-	}
-
-	return resultSegments
-}
-
 func toggleLine(term *terminal.Terminal) {
+	view.ToggleLine(term.CursorY)
 }

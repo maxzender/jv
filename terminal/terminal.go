@@ -1,10 +1,6 @@
 package terminal
 
-import (
-	"strings"
-
-	"github.com/nsf/termbox-go"
-)
+import "github.com/nsf/termbox-go"
 
 type Event termbox.Event
 
@@ -39,15 +35,14 @@ func (t *Terminal) EnsureCursorWithinWindow() {
 	t.CursorY = min(t.Height-1, max(0, t.CursorY))
 }
 
-func (t *Terminal) Draw(content string) {
+func (t *Terminal) Draw(content []string) {
 	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
-	lines := strings.Split(content, "\n")
-	lineCount := len(lines)
+	lineCount := len(content)
 	for y := 0; y < t.Height && y < lineCount; y++ {
-		lineLen := len(lines[y])
+		lineLen := len(content[y])
 		for x := 0; x < t.Width && x < lineLen; x++ {
-			current := rune(lines[y][x])
+			current := rune(content[y][x])
 			termbox.SetCell(x, y, current, termbox.ColorWhite, termbox.ColorDefault)
 		}
 	}
