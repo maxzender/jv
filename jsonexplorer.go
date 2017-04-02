@@ -39,9 +39,8 @@ func main() {
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 			return
-		} else {
-			handleKeypress(term, e)
 		}
+		handleKeypress(term, e)
 	}
 }
 
