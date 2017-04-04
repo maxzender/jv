@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -59,24 +60,38 @@ func main() {
 		os.Exit(1)
 	}
 
-	run(string(content))
+	os.Exit(run(content))
 }
 
-func run(content string) {
+func run(content []byte) int {
+	var data interface{}
+	err := json.Unmarshal(content, &data)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "parse error: %v\n", err)
+		return 1
+	}
+
+	content, err = json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		return 1
+	}
+
 	term, err := terminal.New()
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return 1
 	}
 	defer term.Close()
 
-	lines := strings.Split(content, "\n")
+	lines := strings.Split(string(content), "\n")
 	view = contentview.New(lines)
 
 	for {
 		term.Draw(view.Content())
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
-			return
+			return 0
 		}
 		handleKeypress(term, e)
 	}
