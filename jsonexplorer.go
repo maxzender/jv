@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -23,16 +25,52 @@ var (
 	view *contentview.ContentView
 )
 
+func usage() {
+	fmt.Fprintf(os.Stderr, "Usage: %s [file]\n", os.Args[0])
+	flag.PrintDefaults()
+}
+
 func main() {
+	var showHelp bool
+	flag.BoolVar(&showHelp, "h", false, "print usage")
+	flag.BoolVar(&showHelp, "help", false, "print usage")
+
+	flag.Usage = usage
+	flag.Parse()
+	if showHelp {
+		flag.Usage()
+		os.Exit(0)
+	}
+
+	reader := os.Stdin
+	var err error
+	if len(os.Args) > 1 {
+		reader, err = os.Open(os.Args[1])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
+		defer reader.Close()
+	}
+
+	content, err := ioutil.ReadAll(reader)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(1)
+	}
+
+	run(string(content))
+}
+
+func run(content string) {
 	term, err := terminal.New()
 	if err != nil {
 		panic(err)
 	}
 	defer term.Close()
 
-	byteContent, err := ioutil.ReadAll(os.Stdin)
-	content := strings.Split(string(byteContent), "\n")
-	view = contentview.New(content)
+	lines := strings.Split(content, "\n")
+	view = contentview.New(lines)
 
 	for {
 		term.Draw(view.Content())
