@@ -1,5 +1,11 @@
 package contentview
 
+import (
+	"fmt"
+	"strings"
+	"unicode/utf8"
+)
+
 type ContentView struct {
 	OriginalContent []string
 	Segments        map[int]int
@@ -26,13 +32,18 @@ func (v *ContentView) Content() []string {
 		}
 
 		_, lineExpanded := v.ExpandedLines[line]
-		if !lineExpanded && line > skipTill {
-			skipTill = v.Segments[line]
+		r, _ := utf8.DecodeLastRuneInString(val)
+		if !lineExpanded && (r == '{' || r == '[') {
+			closingBraceLine := v.Segments[line]
+			skipTill = closingBraceLine + 1
+			closingBrace := strings.TrimSpace(v.OriginalContent[closingBraceLine])
+			result = append(result, fmt.Sprintf("%s...%s\n", val, closingBrace))
+		} else {
+			result = append(result, val)
 		}
 
 		v.LineMap[virtualLine] = line
 		virtualLine++
-		result = append(result, val)
 	}
 	return result
 }
