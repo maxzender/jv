@@ -1,15 +1,15 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 
-	"github.com/maxzender/jsonexplorer/contentview"
+	"github.com/maxzender/jsonexplorer/formatters"
 	"github.com/maxzender/jsonexplorer/terminal"
+	"github.com/maxzender/jsonexplorer/treeview"
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -23,7 +23,7 @@ var (
 	specialKeyMap = map[termbox.Key]func(*terminal.Terminal){
 		termbox.KeyEnter: func(t *terminal.Terminal) { toggleLine(t) },
 	}
-	view *contentview.ContentView
+	tree *treeview.TreeView
 )
 
 func usage() {
@@ -64,16 +64,18 @@ func main() {
 }
 
 func run(content []byte) int {
-	var data interface{}
-	err := json.Unmarshal(content, &data)
+	formatted, err := formatters.Apply(
+		bytes.NewReader(content),
+		formatters.Indent,
+	)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "parse error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
 	}
 
-	content, err = json.MarshalIndent(data, "", "    ")
+	tree, err = treeview.New(formatted)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
 	}
 
@@ -84,11 +86,8 @@ func run(content []byte) int {
 	}
 	defer term.Close()
 
-	lines := strings.Split(string(content), "\n")
-	view = contentview.New(lines)
-
 	for {
-		term.Draw(view.Content())
+		term.Draw(tree.Render())
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 			return 0
@@ -112,5 +111,5 @@ func handleKeypress(term *terminal.Terminal, event terminal.Event) {
 }
 
 func toggleLine(term *terminal.Terminal) {
-	view.ToggleLine(term.CursorY)
+	tree.ToggleLine(term.CursorY)
 }

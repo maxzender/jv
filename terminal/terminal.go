@@ -1,6 +1,11 @@
 package terminal
 
-import "github.com/nsf/termbox-go"
+import (
+	"bufio"
+	"io"
+
+	"github.com/nsf/termbox-go"
+)
 
 type Event termbox.Event
 
@@ -35,15 +40,13 @@ func (t *Terminal) EnsureCursorWithinWindow() {
 	t.CursorY = min(t.Height-1, max(0, t.CursorY))
 }
 
-func (t *Terminal) Draw(content []string) {
+func (t *Terminal) Draw(r io.Reader) {
 	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
-	lineCount := len(content)
-	for y := 0; y < t.Height && y < lineCount; y++ {
-		lineLen := len(content[y])
-		for x := 0; x < t.Width && x < lineLen; x++ {
-			current := rune(content[y][x])
-			termbox.SetCell(x, y, current, termbox.ColorWhite, termbox.ColorDefault)
+	scanner := bufio.NewScanner(r)
+	for y := 0; scanner.Scan(); y++ {
+		for x, char := range scanner.Text() {
+			termbox.SetCell(x, y, char, termbox.ColorWhite, termbox.ColorDefault)
 		}
 	}
 
