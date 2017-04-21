@@ -1,9 +1,7 @@
 package terminal
 
 import (
-	"bufio"
-	"io"
-
+	"github.com/maxzender/jsonexplorer/treemodel"
 	"github.com/nsf/termbox-go"
 )
 
@@ -12,6 +10,10 @@ type Event termbox.Event
 type Terminal struct {
 	Width, Height    int
 	CursorX, CursorY int
+}
+
+type CharPosition struct {
+	Col, Line int
 }
 
 func New() (*Terminal, error) {
@@ -40,13 +42,16 @@ func (t *Terminal) EnsureCursorWithinWindow() {
 	t.CursorY = min(t.Height-1, max(0, t.CursorY))
 }
 
-func (t *Terminal) Draw(r io.Reader) {
+func (t *Terminal) Draw(tree *treemodel.TreeModel) {
 	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
-	scanner := bufio.NewScanner(r)
-	for y := 0; scanner.Scan(); y++ {
-		for x, char := range scanner.Text() {
-			termbox.SetCell(x, y, char, termbox.ColorWhite, termbox.ColorDefault)
+	for y := 0; y < t.Height; y++ {
+		if line := tree.Line(y); line != nil {
+			lineLen := len(line)
+			for x := 0; x < t.Width && x < lineLen; x++ {
+				c := line[x]
+				termbox.SetCell(x, y, c.Val, c.Color, termbox.ColorDefault)
+			}
 		}
 	}
 

@@ -6,8 +6,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
-	termbox "github.com/nsf/termbox-go"
 )
 
 type TokenType int
@@ -138,31 +136,4 @@ func (f *Formatter) formatArray(a []interface{}) {
 func (f *Formatter) writeIndent() {
 	indentation := strings.Repeat(` `, f.depth*IndentationDepth)
 	f.Write(indentation, WhiteSpaceType)
-}
-
-// This should probably be an interface
-type cellWriter struct {
-	result [][]termbox.Cell
-	line   int
-}
-
-// Maybe pass a const describing the type (bool, object...) instead
-// of the actual color. This would allow decoupling from termbox.
-func (w *cellWriter) write(s string, fg, bg termbox.Attribute) {
-	w.prepareForWrite(len(s))
-	for _, c := range s {
-		cell := termbox.Cell{c, fg, bg}
-		w.result[w.line] = append(w.result[w.line], cell)
-	}
-
-}
-
-func (w *cellWriter) newline() {
-	w.line++
-}
-
-func (w *cellWriter) prepareForWrite(size int) {
-	if w.result == nil || len(w.result) < w.line {
-		w.result = append(w.result, make([]termbox.Cell, size))
-	}
 }

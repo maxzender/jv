@@ -1,15 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 
-	"github.com/maxzender/jsonexplorer/formatters"
+	"github.com/maxzender/jsonexplorer/formatter"
 	"github.com/maxzender/jsonexplorer/terminal"
-	"github.com/maxzender/jsonexplorer/treeview"
+	"github.com/maxzender/jsonexplorer/treemodel"
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -23,7 +22,14 @@ var (
 	specialKeyMap = map[termbox.Key]func(*terminal.Terminal){
 		termbox.KeyEnter: func(t *terminal.Terminal) { toggleLine(t) },
 	}
-	tree *treeview.TreeView
+	colorMap = map[formatter.TokenType]termbox.Attribute{
+		formatter.DelimiterType: termbox.ColorWhite,
+		formatter.BoolType:      termbox.ColorBlue,
+		formatter.StringType:    termbox.ColorRed,
+		formatter.NumberType:    termbox.ColorYellow,
+		formatter.NullType:      termbox.ColorCyan,
+	}
+	tree *treemodel.TreeModel
 )
 
 func usage() {
@@ -64,20 +70,13 @@ func main() {
 }
 
 func run(content []byte) int {
-	formatted, err := formatters.Apply(
-		bytes.NewReader(content),
-		formatters.Indent,
-	)
-	if err != nil {
+	writer := NewColorWriter(colorMap, termbox.ColorDefault)
+	formatter := formatter.New(content, writer)
+	if err := formatter.Format(); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
 	}
-
-	tree, err = treeview.New(formatted)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return 1
-	}
+	formattedJson := writer.Lines
 
 	term, err := terminal.New()
 	if err != nil {
@@ -86,14 +85,17 @@ func run(content []byte) int {
 	}
 	defer term.Close()
 
+	tree = treemodel.New(formattedJson)
+
 	for {
-		term.Draw(tree.Render())
+		term.Draw(tree)
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 			return 0
 		}
 		handleKeypress(term, e)
 	}
+	return 0
 }
 
 func handleKeypress(term *terminal.Terminal, event terminal.Event) {
