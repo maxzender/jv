@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/maxzender/jsonexplorer/colorwriter"
 	"github.com/maxzender/jsonexplorer/jsonfmt"
 	"github.com/maxzender/jsonexplorer/jsontree"
 	"github.com/maxzender/jsonexplorer/terminal"
@@ -70,7 +71,7 @@ func main() {
 }
 
 func run(content []byte) int {
-	writer := NewColorWriter(colorMap, termbox.ColorDefault)
+	writer := colorwriter.New(colorMap, termbox.ColorDefault)
 	formatter := jsonfmt.New(content, writer)
 	if err := formatter.Format(); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)

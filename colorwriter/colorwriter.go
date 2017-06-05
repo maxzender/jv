@@ -1,4 +1,4 @@
-package main
+package colorwriter
 
 import (
 	"github.com/maxzender/jsonexplorer/jsonfmt"
@@ -13,7 +13,7 @@ type colorWriter struct {
 	bgColor  termbox.Attribute
 }
 
-func NewColorWriter(colorMap map[jsonfmt.TokenType]termbox.Attribute, bgColor termbox.Attribute) *colorWriter {
+func New(colorMap map[jsonfmt.TokenType]termbox.Attribute, bgColor termbox.Attribute) *colorWriter {
 	writer := &colorWriter{
 		colorMap: colorMap,
 		bgColor:  bgColor,

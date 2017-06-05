@@ -1,10 +1,11 @@
-package main
+package colorwriter
 
 import (
 	"reflect"
 	"testing"
 
 	"github.com/maxzender/jsonexplorer/jsonfmt"
+	"github.com/maxzender/jsonexplorer/jsontree"
 	"github.com/nsf/termbox-go"
 )
 
@@ -19,7 +20,7 @@ var testColorMap = map[jsonfmt.TokenType]termbox.Attribute{
 var defaultColor = termbox.ColorDefault
 
 func TestWrite(t *testing.T) {
-	writer := NewColorWriter(testColorMap, defaultColor)
+	writer := New(testColorMap, defaultColor)
 	writer.Write(`{`, jsonfmt.DelimiterType)
 	writer.Newline()
 	writer.Write(`    `, jsonfmt.WhiteSpaceType)
