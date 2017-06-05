@@ -42,7 +42,7 @@ func (t *Terminal) EnsureCursorWithinWindow() {
 	t.CursorY = min(t.Height-1, max(0, t.CursorY))
 }
 
-func (t *Terminal) Draw(tree *jsontree.JsonTree) {
+func (t *Terminal) Render(tree *jsontree.JsonTree) {
 	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
 	for y := 0; y < t.Height; y++ {

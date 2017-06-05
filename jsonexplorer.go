@@ -89,7 +89,7 @@ func run(content []byte) int {
 	tree = jsontree.New(formattedJson)
 
 	for {
-		term.Draw(tree)
+		term.Render(tree)
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 			return 0
