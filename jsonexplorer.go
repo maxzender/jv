@@ -24,7 +24,7 @@ var (
 		termbox.KeyEnter: func(t *terminal.Terminal) { toggleLine(t) },
 	}
 	colorMap = map[jsonfmt.TokenType]termbox.Attribute{
-		jsonfmt.DelimiterType: termbox.ColorWhite,
+		jsonfmt.DelimiterType: termbox.ColorDefault,
 		jsonfmt.BoolType:      termbox.ColorBlue,
 		jsonfmt.StringType:    termbox.ColorRed,
 		jsonfmt.NumberType:    termbox.ColorYellow,
