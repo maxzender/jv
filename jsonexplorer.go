@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/maxzender/jsonexplorer/formatter"
+	"github.com/maxzender/jsonexplorer/jsonfmt"
 	"github.com/maxzender/jsonexplorer/terminal"
 	"github.com/maxzender/jsonexplorer/treemodel"
 	termbox "github.com/nsf/termbox-go"
@@ -22,12 +22,12 @@ var (
 	specialKeyMap = map[termbox.Key]func(*terminal.Terminal){
 		termbox.KeyEnter: func(t *terminal.Terminal) { toggleLine(t) },
 	}
-	colorMap = map[formatter.TokenType]termbox.Attribute{
-		formatter.DelimiterType: termbox.ColorWhite,
-		formatter.BoolType:      termbox.ColorBlue,
-		formatter.StringType:    termbox.ColorRed,
-		formatter.NumberType:    termbox.ColorYellow,
-		formatter.NullType:      termbox.ColorCyan,
+	colorMap = map[jsonfmt.TokenType]termbox.Attribute{
+		jsonfmt.DelimiterType: termbox.ColorWhite,
+		jsonfmt.BoolType:      termbox.ColorBlue,
+		jsonfmt.StringType:    termbox.ColorRed,
+		jsonfmt.NumberType:    termbox.ColorYellow,
+		jsonfmt.NullType:      termbox.ColorCyan,
 	}
 	tree *treemodel.TreeModel
 )
@@ -71,7 +71,7 @@ func main() {
 
 func run(content []byte) int {
 	writer := NewColorWriter(colorMap, termbox.ColorDefault)
-	formatter := formatter.New(content, writer)
+	formatter := jsonfmt.New(content, writer)
 	if err := formatter.Format(); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1

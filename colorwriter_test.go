@@ -4,32 +4,31 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/maxzender/jsonexplorer/formatter"
 	"github.com/maxzender/jsonexplorer/treemodel"
 	"github.com/nsf/termbox-go"
 )
 
-var testColorMap = map[formatter.TokenType]termbox.Attribute{
-	formatter.DelimiterType: termbox.ColorWhite,
-	formatter.BoolType:      termbox.ColorBlue,
-	formatter.StringType:    termbox.ColorRed,
-	formatter.NumberType:    termbox.ColorYellow,
-	formatter.NullType:      termbox.ColorCyan,
+var testColorMap = map[jsonfmt.TokenType]termbox.Attribute{
+	jsonfmt.DelimiterType: termbox.ColorWhite,
+	jsonfmt.BoolType:      termbox.ColorBlue,
+	jsonfmt.StringType:    termbox.ColorRed,
+	jsonfmt.NumberType:    termbox.ColorYellow,
+	jsonfmt.NullType:      termbox.ColorCyan,
 }
 
 var defaultColor = termbox.ColorDefault
 
 func TestWrite(t *testing.T) {
 	writer := NewColorWriter(testColorMap, defaultColor)
-	writer.Write(`{`, formatter.DelimiterType)
+	writer.Write(`{`, jsonfmt.DelimiterType)
 	writer.Newline()
-	writer.Write(`    `, formatter.WhiteSpaceType)
-	writer.Write(`"test"`, formatter.StringType)
-	writer.Write(`:`, formatter.DelimiterType)
-	writer.Write(` `, formatter.WhiteSpaceType)
-	writer.Write(`4`, formatter.NumberType)
+	writer.Write(`    `, jsonfmt.WhiteSpaceType)
+	writer.Write(`"test"`, jsonfmt.StringType)
+	writer.Write(`:`, jsonfmt.DelimiterType)
+	writer.Write(` `, jsonfmt.WhiteSpaceType)
+	writer.Write(`4`, jsonfmt.NumberType)
 	writer.Newline()
-	writer.Write(`}`, formatter.DelimiterType)
+	writer.Write(`}`, jsonfmt.DelimiterType)
 
 	expected := []treemodel.Line{
 		treemodel.Line{{'{', termbox.ColorWhite}},

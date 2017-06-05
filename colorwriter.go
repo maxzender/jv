@@ -1,19 +1,19 @@
 package main
 
 import (
-	"github.com/maxzender/jsonexplorer/formatter"
+	"github.com/maxzender/jsonexplorer/jsonfmt"
 	"github.com/maxzender/jsonexplorer/treemodel"
 	"github.com/nsf/termbox-go"
 )
 
 type colorWriter struct {
 	Lines    []treemodel.Line
-	colorMap map[formatter.TokenType]termbox.Attribute
+	colorMap map[jsonfmt.TokenType]termbox.Attribute
 	line     int
 	bgColor  termbox.Attribute
 }
 
-func NewColorWriter(colorMap map[formatter.TokenType]termbox.Attribute, bgColor termbox.Attribute) *colorWriter {
+func NewColorWriter(colorMap map[jsonfmt.TokenType]termbox.Attribute, bgColor termbox.Attribute) *colorWriter {
 	writer := &colorWriter{
 		colorMap: colorMap,
 		bgColor:  bgColor,
@@ -24,7 +24,7 @@ func NewColorWriter(colorMap map[formatter.TokenType]termbox.Attribute, bgColor 
 	return writer
 }
 
-func (w *colorWriter) Write(s string, t formatter.TokenType) {
+func (w *colorWriter) Write(s string, t jsonfmt.TokenType) {
 	for _, c := range s {
 		w.Lines[w.line] = append(w.Lines[w.line], treemodel.Char{c, w.colorMap[t]})
 	}

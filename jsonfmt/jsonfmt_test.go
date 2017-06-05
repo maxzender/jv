@@ -1,4 +1,4 @@
-package formatter
+package jsonfmt
 
 import (
 	"bytes"
