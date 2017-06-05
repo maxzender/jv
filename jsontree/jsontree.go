@@ -1,4 +1,4 @@
-package treemodel
+package jsontree
 
 import (
 	"unicode"
@@ -6,7 +6,7 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-type TreeModel struct {
+type JsonTree struct {
 	lines         []Line
 	expandedLines map[int]struct{}
 	lineMap       map[int]int
@@ -20,8 +20,8 @@ type Char struct {
 
 type Line []Char
 
-func New(lines []Line) *TreeModel {
-	model := &TreeModel{
+func New(lines []Line) *JsonTree {
+	model := &JsonTree{
 		lines:         lines,
 		expandedLines: map[int]struct{}{},
 		lineMap:       make(map[int]int),
@@ -33,26 +33,26 @@ func New(lines []Line) *TreeModel {
 	return model
 }
 
-func (v *TreeModel) ToggleLine(virtualLn int) {
-	actualLn := v.lineMap[virtualLn]
-	if !v.isBeginningOfSegment(actualLn) {
+func (t *JsonTree) ToggleLine(virtualLn int) {
+	actualLn := t.lineMap[virtualLn]
+	if !t.isBeginningOfSegment(actualLn) {
 		return
 	}
 
-	if v.isExpanded(actualLn) {
-		delete(v.expandedLines, actualLn)
+	if t.isExpanded(actualLn) {
+		delete(t.expandedLines, actualLn)
 	} else {
-		v.expandedLines[actualLn] = struct{}{}
+		t.expandedLines[actualLn] = struct{}{}
 	}
-	v.recalculateLineMap()
+	t.recalculateLineMap()
 }
 
-func (v *TreeModel) Line(virtualLn int) Line {
-	actualLn, ok := v.lineMap[virtualLn]
+func (t *JsonTree) Line(virtualLn int) Line {
+	actualLn, ok := t.lineMap[virtualLn]
 	if ok {
-		ln := v.lines[actualLn]
-		if v.isBeginningOfSegment(actualLn) && !v.isExpanded(actualLn) {
-			ln = v.lineWithDots(actualLn)
+		ln := t.lines[actualLn]
+		if t.isBeginningOfSegment(actualLn) && !t.isExpanded(actualLn) {
+			ln = t.lineWithDots(actualLn)
 		}
 		return ln
 	} else {
@@ -60,13 +60,13 @@ func (v *TreeModel) Line(virtualLn int) Line {
 	}
 }
 
-func (v *TreeModel) lineWithDots(actualLn int) Line {
-	ln := v.lines[actualLn]
+func (t *JsonTree) lineWithDots(actualLn int) Line {
+	ln := t.lines[actualLn]
 
 	lastChar := ln[len(ln)-1]
 	ln = append(ln, Char{'…', lastChar.Color})
 
-	matchingBrace := v.lines[v.segments[actualLn]]
+	matchingBrace := t.lines[t.segments[actualLn]]
 	for _, c := range matchingBrace {
 		if !unicode.IsSpace(c.Val) {
 			ln = append(ln, c)
@@ -76,30 +76,30 @@ func (v *TreeModel) lineWithDots(actualLn int) Line {
 	return ln
 }
 
-func (v *TreeModel) isExpanded(actualLn int) bool {
-	_, isExpanded := v.expandedLines[actualLn]
+func (t *JsonTree) isExpanded(actualLn int) bool {
+	_, isExpanded := t.expandedLines[actualLn]
 	return isExpanded
 }
 
-func (v *TreeModel) isBeginningOfSegment(actualLn int) bool {
-	_, ok := v.segments[actualLn]
+func (t *JsonTree) isBeginningOfSegment(actualLn int) bool {
+	_, ok := t.segments[actualLn]
 	return ok
 }
 
-func (v *TreeModel) recalculateLineMap() {
-	v.lineMap = make(map[int]int)
+func (t *JsonTree) recalculateLineMap() {
+	t.lineMap = make(map[int]int)
 	skipTill := 0
 	virtualLn := 0
-	for actualLn, _ := range v.lines {
+	for actualLn, _ := range t.lines {
 		if actualLn < skipTill {
 			continue
 		}
 
-		if v.isBeginningOfSegment(actualLn) && !v.isExpanded(actualLn) {
-			skipTill = v.segments[actualLn] + 1
+		if t.isBeginningOfSegment(actualLn) && !t.isExpanded(actualLn) {
+			skipTill = t.segments[actualLn] + 1
 		}
 
-		v.lineMap[virtualLn] = actualLn
+		t.lineMap[virtualLn] = actualLn
 		virtualLn++
 	}
 }

@@ -1,4 +1,4 @@
-package treemodel
+package jsontree
 
 import (
 	"reflect"

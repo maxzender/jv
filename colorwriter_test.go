@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/maxzender/jsonexplorer/treemodel"
+	"github.com/maxzender/jsonexplorer/jsonfmt"
 	"github.com/nsf/termbox-go"
 )
 
@@ -30,9 +30,9 @@ func TestWrite(t *testing.T) {
 	writer.Newline()
 	writer.Write(`}`, jsonfmt.DelimiterType)
 
-	expected := []treemodel.Line{
-		treemodel.Line{{'{', termbox.ColorWhite}},
-		treemodel.Line{
+	expected := []jsontree.Line{
+		jsontree.Line{{'{', termbox.ColorWhite}},
+		jsontree.Line{
 			{' ', 0},
 			{' ', 0},
 			{' ', 0},
@@ -47,7 +47,7 @@ func TestWrite(t *testing.T) {
 			{' ', 0},
 			{'4', termbox.ColorYellow},
 		},
-		treemodel.Line{{'}', termbox.ColorWhite}},
+		jsontree.Line{{'}', termbox.ColorWhite}},
 	}
 	actual := writer.Lines
 

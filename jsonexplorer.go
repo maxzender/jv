@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/maxzender/jsonexplorer/jsonfmt"
+	"github.com/maxzender/jsonexplorer/jsontree"
 	"github.com/maxzender/jsonexplorer/terminal"
-	"github.com/maxzender/jsonexplorer/treemodel"
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -29,7 +29,7 @@ var (
 		jsonfmt.NumberType:    termbox.ColorYellow,
 		jsonfmt.NullType:      termbox.ColorCyan,
 	}
-	tree *treemodel.TreeModel
+	tree *jsontree.JsonTree
 )
 
 func usage() {
@@ -85,7 +85,7 @@ func run(content []byte) int {
 	}
 	defer term.Close()
 
-	tree = treemodel.New(formattedJson)
+	tree = jsontree.New(formattedJson)
 
 	for {
 		term.Draw(tree)
