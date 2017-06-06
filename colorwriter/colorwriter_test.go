@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/maxzender/jsonexplorer/jsonfmt"
-	"github.com/maxzender/jsonexplorer/jsontree"
+	"github.com/maxzender/jv/jsonfmt"
+	"github.com/maxzender/jv/jsontree"
 	"github.com/nsf/termbox-go"
 )
 

@@ -1,19 +1,13 @@
 package terminal
 
 import (
-	"github.com/maxzender/jsonexplorer/jsontree"
+	"github.com/maxzender/jv/jsontree"
 	"github.com/nsf/termbox-go"
 )
-
-type Event termbox.Event
 
 type Terminal struct {
 	Width, Height    int
 	CursorX, CursorY int
-}
-
-type CharPosition struct {
-	Col, Line int
 }
 
 func New() (*Terminal, error) {
@@ -59,11 +53,11 @@ func (t *Terminal) Render(tree *jsontree.JsonTree) {
 	termbox.Flush()
 }
 
-func (t *Terminal) Poll() Event {
+func (t *Terminal) Poll() termbox.Event {
 	for {
 		switch e := termbox.PollEvent(); e.Type {
 		case termbox.EventKey:
-			return Event(e)
+			return e
 		case termbox.EventResize:
 			t.Resize(e.Width, e.Height)
 		}

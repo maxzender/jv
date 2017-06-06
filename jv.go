@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/maxzender/jsonexplorer/colorwriter"
-	"github.com/maxzender/jsonexplorer/jsonfmt"
-	"github.com/maxzender/jsonexplorer/jsontree"
-	"github.com/maxzender/jsonexplorer/terminal"
+	"github.com/maxzender/jv/colorwriter"
+	"github.com/maxzender/jv/jsonfmt"
+	"github.com/maxzender/jv/jsontree"
+	"github.com/maxzender/jv/terminal"
 	termbox "github.com/nsf/termbox-go"
 )
 
@@ -89,7 +89,7 @@ func run(content []byte) int {
 	return 0
 }
 
-func handleKeypress(t *terminal.Terminal, j *jsontree.JsonTree, e terminal.Event) {
+func handleKeypress(t *terminal.Terminal, j *jsontree.JsonTree, e termbox.Event) {
 	if e.Ch == 0 {
 		switch e.Key {
 		case termbox.KeyArrowUp:
