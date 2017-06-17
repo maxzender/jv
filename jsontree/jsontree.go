@@ -115,7 +115,9 @@ func parseSegments(lines []Line) map[int]int {
 				bal++
 				bracketBalances[bal] = num
 			case '}', ']':
-				resultSegments[bracketBalances[bal]] = num
+				if startLn := bracketBalances[bal]; startLn != num {
+					resultSegments[startLn] = num
+				}
 				bal--
 			}
 		}

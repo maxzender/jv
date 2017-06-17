@@ -34,6 +34,31 @@ func TestToggleLine(t *testing.T) {
 
 }
 
+var sampleJsonWithEmptyObject = createLinesFromString(`{
+    "foo": {},
+    "bar": {
+        "baz": 0
+    }
+}`)
+
+func TestEmptyObjects(t *testing.T) {
+	tree := New(sampleJsonWithEmptyObject)
+
+	actual := tree.Line(1)
+	expected := createLinesFromString(`    "foo": {},`)[0]
+
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("Line: %v, want %v", actual, expected)
+	}
+
+	actual = tree.Line(2)
+	expected = createLinesFromString(`    "bar": {…}`)[0]
+
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("Line: %v, want %v", actual, expected)
+	}
+}
+
 func createLinesFromString(s string) []Line {
 	var lines []Line
 	for _, ln := range strings.Split(s, "\n") {
