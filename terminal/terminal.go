@@ -8,16 +8,17 @@ import (
 type Terminal struct {
 	Width, Height    int
 	CursorX, CursorY int
+	Tree             *jsontree.JsonTree
 }
 
-func New() (*Terminal, error) {
+func New(tree *jsontree.JsonTree) (*Terminal, error) {
 	err := termbox.Init()
 	if err != nil {
 		return nil, err
 	}
 
 	w, h := termbox.Size()
-	return &Terminal{Width: w, Height: h}, nil
+	return &Terminal{Width: w, Height: h, Tree: tree}, nil
 }
 
 func (t *Terminal) MoveCursor(x, y int) {
@@ -29,6 +30,7 @@ func (t *Terminal) Resize(width, height int) {
 	t.Width = width
 	t.Height = height
 	t.EnsureCursorWithinWindow()
+	t.Render()
 }
 
 func (t *Terminal) EnsureCursorWithinWindow() {
@@ -36,11 +38,11 @@ func (t *Terminal) EnsureCursorWithinWindow() {
 	t.CursorY = min(t.Height-1, max(0, t.CursorY))
 }
 
-func (t *Terminal) Render(tree *jsontree.JsonTree) {
+func (t *Terminal) Render() {
 	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
 	for y := 0; y < t.Height; y++ {
-		if line := tree.Line(y); line != nil {
+		if line := t.Tree.Line(y); line != nil {
 			lineLen := len(line)
 			for x := 0; x < t.Width && x < lineLen; x++ {
 				c := line[x]

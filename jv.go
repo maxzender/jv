@@ -69,17 +69,16 @@ func run(content []byte) int {
 	}
 	formattedJson := writer.Lines
 
-	term, err := terminal.New()
+	tree := jsontree.New(formattedJson)
+	term, err := terminal.New(tree)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return 1
 	}
 	defer term.Close()
 
-	tree := jsontree.New(formattedJson)
-
 	for {
-		term.Render(tree)
+		term.Render()
 		e := term.Poll()
 		if e.Ch == 'q' || e.Key == termbox.KeyCtrlC {
 			return 0
