@@ -85,7 +85,6 @@ func run(content []byte) int {
 		}
 		handleKeypress(term, tree, e)
 	}
-	return 0
 }
 
 func handleKeypress(t *terminal.Terminal, j *jsontree.JsonTree, e termbox.Event) {

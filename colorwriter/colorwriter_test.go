@@ -32,8 +32,8 @@ func TestWrite(t *testing.T) {
 	writer.Write(`}`, jsonfmt.DelimiterType)
 
 	expected := []jsontree.Line{
-		jsontree.Line{{'{', termbox.ColorWhite}},
-		jsontree.Line{
+		{{'{', termbox.ColorWhite}},
+		{
 			{' ', 0},
 			{' ', 0},
 			{' ', 0},
@@ -48,7 +48,7 @@ func TestWrite(t *testing.T) {
 			{' ', 0},
 			{'4', termbox.ColorYellow},
 		},
-		jsontree.Line{{'}', termbox.ColorWhite}},
+		{{'}', termbox.ColorWhite}},
 	}
 	actual := writer.Lines
 

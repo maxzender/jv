@@ -55,9 +55,9 @@ func (t *JsonTree) Line(virtualLn int) Line {
 			ln = t.lineWithDots(actualLn)
 		}
 		return ln
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
 func (t *JsonTree) lineWithDots(actualLn int) Line {
@@ -90,7 +90,7 @@ func (t *JsonTree) recalculateLineMap() {
 	t.lineMap = make(map[int]int)
 	skipTill := 0
 	virtualLn := 0
-	for actualLn, _ := range t.lines {
+	for actualLn := range t.lines {
 		if actualLn < skipTill {
 			continue
 		}
