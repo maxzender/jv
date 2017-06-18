@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/maxzender/jv)](https://goreportcard.com/report/maxzender/jv)
+
 # jv
 jv (for jsonviewer) helps you view your JSON.
 
