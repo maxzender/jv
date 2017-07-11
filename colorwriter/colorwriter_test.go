@@ -15,6 +15,7 @@ var testColorMap = map[jsonfmt.TokenType]termbox.Attribute{
 	jsonfmt.StringType:    termbox.ColorRed,
 	jsonfmt.NumberType:    termbox.ColorYellow,
 	jsonfmt.NullType:      termbox.ColorCyan,
+	jsonfmt.KeyType:       termbox.ColorBlack,
 }
 
 var defaultColor = termbox.ColorDefault
@@ -24,7 +25,7 @@ func TestWrite(t *testing.T) {
 	writer.Write(`{`, jsonfmt.DelimiterType)
 	writer.Newline()
 	writer.Write(`    `, jsonfmt.WhiteSpaceType)
-	writer.Write(`"test"`, jsonfmt.StringType)
+	writer.Write(`"test"`, jsonfmt.KeyType)
 	writer.Write(`:`, jsonfmt.DelimiterType)
 	writer.Write(` `, jsonfmt.WhiteSpaceType)
 	writer.Write(`4`, jsonfmt.NumberType)
@@ -38,12 +39,12 @@ func TestWrite(t *testing.T) {
 			{' ', 0},
 			{' ', 0},
 			{' ', 0},
-			{'"', termbox.ColorRed},
-			{'t', termbox.ColorRed},
-			{'e', termbox.ColorRed},
-			{'s', termbox.ColorRed},
-			{'t', termbox.ColorRed},
-			{'"', termbox.ColorRed},
+			{'"', termbox.ColorBlack},
+			{'t', termbox.ColorBlack},
+			{'e', termbox.ColorBlack},
+			{'s', termbox.ColorBlack},
+			{'t', termbox.ColorBlack},
+			{'"', termbox.ColorBlack},
 			{':', termbox.ColorWhite},
 			{' ', 0},
 			{'4', termbox.ColorYellow},

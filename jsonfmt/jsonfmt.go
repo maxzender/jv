@@ -17,6 +17,7 @@ const (
 	NumberType
 	NullType
 	WhiteSpaceType
+	KeyType
 )
 
 type FormatWriter interface {
@@ -86,7 +87,7 @@ func (f *Formatter) formatObject(obj map[string]interface{}) {
 		jsonKey := fmt.Sprintf("\"%s\"", key)
 
 		f.writeIndent()
-		f.Write(jsonKey, StringType)
+		f.Write(jsonKey, KeyType)
 		f.Write(":", DelimiterType)
 		f.Write(" ", WhiteSpaceType)
 

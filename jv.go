@@ -16,10 +16,11 @@ import (
 var (
 	colorMap = map[jsonfmt.TokenType]termbox.Attribute{
 		jsonfmt.DelimiterType: termbox.ColorDefault,
-		jsonfmt.BoolType:      termbox.ColorBlue,
-		jsonfmt.StringType:    termbox.ColorRed,
+		jsonfmt.BoolType:      termbox.ColorRed,
+		jsonfmt.StringType:    termbox.ColorGreen,
 		jsonfmt.NumberType:    termbox.ColorYellow,
-		jsonfmt.NullType:      termbox.ColorCyan,
+		jsonfmt.NullType:      termbox.ColorMagenta,
+		jsonfmt.KeyType:       termbox.ColorBlue,
 	}
 )
 

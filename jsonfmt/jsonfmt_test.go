@@ -31,11 +31,11 @@ func (w *stringWriter) Newline() {
 // Test correct colorization of output
 var colorExamples = []example{
 	{`{}`, `RED{}`},
-	{`{"test":true}`, `RED{GREEN"test"RED:BLUEtrueRED}`},
-	{`{"test":"foo"}`, `RED{GREEN"test"RED:GREEN"foo"RED}`},
-	{`{"test":4}`, `RED{GREEN"test"RED:YELLOW4RED}`},
-	{`{"test":3.14159265359}`, `RED{GREEN"test"RED:YELLOW3.14159265359RED}`},
-	{`{"test":null}`, `RED{GREEN"test"RED:BLACKnullRED}`},
+	{`{"test":true}`, `RED{WHITE"test"RED:BLUEtrueRED}`},
+	{`{"test":"foo"}`, `RED{WHITE"test"RED:GREEN"foo"RED}`},
+	{`{"test":4}`, `RED{WHITE"test"RED:YELLOW4RED}`},
+	{`{"test":3.14159265359}`, `RED{WHITE"test"RED:YELLOW3.14159265359RED}`},
+	{`{"test":null}`, `RED{WHITE"test"RED:BLACKnullRED}`},
 }
 
 func TestFormatColors(t *testing.T) {
@@ -45,6 +45,7 @@ func TestFormatColors(t *testing.T) {
 		StringType:    "GREEN",
 		NumberType:    "YELLOW",
 		NullType:      "BLACK",
+		KeyType:       "WHITE",
 	}
 
 	removeWhiteSpace := func(s string) string {
