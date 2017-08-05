@@ -8,6 +8,7 @@ import (
 type Terminal struct {
 	Width, Height    int
 	CursorX, CursorY int
+	OffsetX, OffsetY int
 	Tree             *jsontree.JsonTree
 }
 
@@ -22,8 +23,21 @@ func New(tree *jsontree.JsonTree) (*Terminal, error) {
 }
 
 func (t *Terminal) MoveCursor(x, y int) {
-	t.CursorX, t.CursorY = t.CursorX+x, t.CursorY+y
-	t.EnsureCursorWithinWindow()
+	currentLine := t.Tree.Line(t.OffsetY + t.CursorY)
+	nextLine := t.Tree.Line(t.OffsetY + t.CursorY + y)
+
+	if t.CursorX+x == t.Width && len(currentLine) > t.OffsetX+t.Width {
+		t.OffsetX++
+	} else if t.CursorX == 0 && t.OffsetX > 0 {
+		t.OffsetX--
+	} else if t.CursorY+y == t.Height && nextLine != nil {
+		t.OffsetY++
+	} else if t.CursorY == 0 && t.OffsetY > 0 {
+		t.OffsetY--
+	} else {
+		t.CursorX, t.CursorY = t.CursorX+x, t.CursorY+y
+		t.EnsureCursorWithinWindow()
+	}
 }
 
 func (t *Terminal) Resize(width, height int) {
@@ -42,10 +56,10 @@ func (t *Terminal) Render() {
 	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
 	for y := 0; y < t.Height; y++ {
-		if line := t.Tree.Line(y); line != nil {
+		if line := t.Tree.Line(y + t.OffsetY); line != nil {
 			lineLen := len(line)
-			for x := 0; x < t.Width && x < lineLen; x++ {
-				c := line[x]
+			for x := 0; x < t.Width && x+t.OffsetX < lineLen; x++ {
+				c := line[x+t.OffsetX]
 				termbox.SetCell(x, y, c.Val, c.Color, termbox.ColorDefault)
 			}
 		}

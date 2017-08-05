@@ -100,9 +100,9 @@ func handleKeypress(t *terminal.Terminal, j *jsontree.JsonTree, e termbox.Event)
 		case termbox.KeyArrowRight:
 			t.MoveCursor(+1, 0)
 		case termbox.KeyEnter:
-			j.ToggleLine(t.CursorY)
+			j.ToggleLine(t.CursorY + t.OffsetY)
 		case termbox.KeySpace:
-			j.ToggleLine(t.CursorY)
+			j.ToggleLine(t.CursorY + t.OffsetY)
 		}
 	} else {
 		switch e.Ch {
