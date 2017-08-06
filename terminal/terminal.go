@@ -28,11 +28,11 @@ func (t *Terminal) MoveCursor(x, y int) {
 
 	if t.CursorX+x == t.Width && len(currentLine) > t.OffsetX+t.Width {
 		t.OffsetX++
-	} else if t.CursorX == 0 && t.OffsetX > 0 {
+	} else if t.CursorX+x < 0 && t.OffsetX > 0 {
 		t.OffsetX--
 	} else if t.CursorY+y == t.Height && nextLine != nil {
 		t.OffsetY++
-	} else if t.CursorY == 0 && t.OffsetY > 0 {
+	} else if t.CursorY+y < 0 && t.OffsetY > 0 {
 		t.OffsetY--
 	} else {
 		t.CursorX, t.CursorY = t.CursorX+x, t.CursorY+y
